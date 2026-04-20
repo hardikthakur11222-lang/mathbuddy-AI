@@ -14,7 +14,7 @@ export default function ChatPage() {
 
   // ✅ Load greeting from backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/chat", {
+    fetch("https://mathbuddy-ai.onrender.com/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -33,33 +33,40 @@ export default function ChatPage() {
 
     const userId = localStorage.getItem("userId") || "";
 
-    const updated = [...messages, { role: "user", text: input }];
-    setMessages(updated);
+    // ✅ FIXED (TypeScript issue resolved here)
+    setMessages((prev) => [
+      ...prev,
+      { role: "user" as const, text: input },
+    ]);
+
     setInput("");
     setLoading(true);
 
     try {
-      const res = await fetch("https://mathbuddy-ai.onrender.com", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-user-id": userId,
-        },
-        body: JSON.stringify({ message: input }),
-      });
+      const res = await fetch(
+        "https://mathbuddy-ai.onrender.com/api/chat",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-user-id": userId,
+          },
+          body: JSON.stringify({ message: input }),
+        }
+      );
 
       const data = await res.json();
 
-      setMessages([
-        ...updated,
+      setMessages((prev) => [
+        ...prev,
         {
           role: "bot",
           text: data.message || "🤖 Try again 😊",
         },
       ]);
     } catch {
-      setMessages([
-        ...updated,
+      setMessages((prev) => [
+        ...prev,
         {
           role: "bot",
           text: "⚠️ Error. Try again later.",
@@ -71,7 +78,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col h-full w-full max-w-2xl">
+    <div className="flex flex-col h-full w-full max-w-2xl mx-auto">
 
       {/* 🔥 TITLE */}
       <h2 className="text-center mb-3 text-lg font-semibold text-white">
