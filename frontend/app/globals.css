@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+/* Theme text colors */
+html.light {
+  --foreground: #000000;
+}
+
+html.dark {
+  --foreground: #ffffff;
+}
+
+body {
+  background: transparent;
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
