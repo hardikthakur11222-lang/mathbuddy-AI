@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
 
 type Message = {
   role: "user" | "bot";
@@ -33,10 +34,10 @@ export default function ChatPage() {
 
     const userId = localStorage.getItem("userId") || "";
 
-    // ✅ FIXED (TypeScript issue resolved here)
+    // Add user message
     setMessages((prev) => [
       ...prev,
-      { role: "user" as const, text: input },
+      { role: "user", text: input },
     ]);
 
     setInput("");
@@ -78,43 +79,48 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col h-full w-full max-w-2xl mx-auto">
+    <div className="flex flex-col h-screen w-full max-w-2xl mx-auto p-3">
 
       {/* 🔥 TITLE */}
       <h2 className="text-center mb-3 text-lg font-semibold text-white">
         🧠 Ask me a math question
       </h2>
 
-      {/* Chat Box */}
-      <div className="flex-1 overflow-y-auto p-4 rounded-xl shadow mb-3 bg-black/70 text-white">
-        
+      {/* ✅ CHAT BOX */}
+      <div className="flex-1 overflow-y-auto p-4 rounded-xl shadow mb-3 bg-black/70 text-white space-y-3">
+
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={`mb-2 flex ${
+            className={`flex ${
               msg.role === "user" ? "justify-end" : "justify-start"
             }`}
           >
             <div
-              className={`px-4 py-2 rounded-xl max-w-xs whitespace-pre-line ${
+              className={`px-4 py-2 rounded-2xl max-w-[80%] whitespace-pre-wrap break-words ${
                 msg.role === "user"
                   ? "bg-blue-500 text-white"
                   : "bg-gray-800 text-white"
               }`}
             >
-              {msg.text}
+              {/* ✅ Markdown Support */}
+              <ReactMarkdown>{msg.text}</ReactMarkdown>
             </div>
           </div>
         ))}
 
-        {loading && <p>🤖 Thinking...</p>}
+        {loading && (
+          <p className="text-sm text-gray-300 animate-pulse">
+            🤖 Thinking...
+          </p>
+        )}
       </div>
 
-      {/* Input */}
+      {/* ✅ INPUT BOX */}
       <div className="flex gap-2">
         <input
           type="text"
-          className="flex-1 p-2 rounded border bg-gray-800 text-white"
+          className="flex-1 p-2 rounded border bg-gray-800 text-white outline-none"
           placeholder="Type a math question..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -122,7 +128,7 @@ export default function ChatPage() {
 
         <button
           onClick={sendMessage}
-          className="bg-blue-500 text-white px-4 rounded"
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-lg transition"
         >
           Send 🚀
         </button>
